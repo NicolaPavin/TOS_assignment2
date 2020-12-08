@@ -16,6 +16,10 @@ public class IceCreamBill implements TakeAwayBill {
     public double getOrderPrice(
         List<MenuItem> itemsOrdered, User user, Date date
         ) throws TakeAwayBillException {
+
+        if (itemsOrdered.size() > 30) {
+            throw new TakeAwayBillException();
+        }
         
         double totalPrice = calculateCost(itemsOrdered);
 

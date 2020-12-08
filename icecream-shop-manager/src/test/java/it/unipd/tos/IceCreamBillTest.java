@@ -22,7 +22,7 @@ import it.unipd.tos.model.User;
 public class IceCreamBillTest {
     TakeAwayBill bill = new IceCreamBill();
     List<MenuItem> items;
-    User user = new User(1, "Joe", "Doe", 20);
+    User user;
 
     @Before
     public void reset() {
@@ -63,7 +63,7 @@ public class IceCreamBillTest {
         items.add(new MenuItem("Pistacchio", itemTypes.Gelati, 5));
         // 5*4 + 3 + 4/2 = 25
 
-        double totalPrice = bill.getOrderPrice(items, new User(1, "Joe", "Doe", 20), new Date());
+        double totalPrice = bill.getOrderPrice(items, user, new Date());
 
         assertEquals(25, totalPrice, 0);
     }
@@ -77,7 +77,7 @@ public class IceCreamBillTest {
         }
         // 5*5 + 3*5 = 40
 
-        double totalPrice = bill.getOrderPrice(items, new User(1, "Joe", "Doe", 20), new Date());
+        double totalPrice = bill.getOrderPrice(items, user, new Date());
 
         assertEquals(40, totalPrice, 0);
     }
@@ -92,7 +92,7 @@ public class IceCreamBillTest {
         items.add(new MenuItem("Premium Water", itemTypes.Bevande, 6));
         // 5*10 + 4 + 6 - 60/10 = 54
 
-        double totalPrice = bill.getOrderPrice(items, new User(1, "Joe", "Doe", 20), new Date());
+        double totalPrice = bill.getOrderPrice(items, user, new Date());
 
         assertEquals(54, totalPrice, 0);
     }
@@ -106,8 +106,18 @@ public class IceCreamBillTest {
         }
         // 10*(6+5) - 6/2 = 107 => -107/10 => 96.3
 
-        double totalPrice = bill.getOrderPrice(items, new User(1, "Joe", "Doe", 20), new Date());
+        double totalPrice = bill.getOrderPrice(items, user, new Date());
 
         assertEquals(96.3, totalPrice, 0);
+    }
+
+    @Test(expected = TakeAwayBillException.class)
+    public void testIceCreamBill_30orMoreItems_Exception() throws TakeAwayBillException {
+
+        for(int i =0; i<35; i++) {
+            items.add(new MenuItem("Coke", itemTypes.Bevande, 10));
+        }
+
+        double totalPrice = bill.getOrderPrice(items, user, new Date());
     }
 }
