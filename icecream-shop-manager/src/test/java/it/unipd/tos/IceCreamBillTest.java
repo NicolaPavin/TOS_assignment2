@@ -174,14 +174,7 @@ public class IceCreamBillTest {
 
         IceCreamBill.makeFree(bills);
 
-        int freeBills = 0;
-        for (IceCreamBill bill: bills) {
-            if (bill.getPrice() == 0) {
-               freeBills++;
-            }
-        }
-
-        assertEquals(10, freeBills);
+        assertFrees(10, bills);
     }
 
     @Test
@@ -201,14 +194,7 @@ public class IceCreamBillTest {
 
         IceCreamBill.makeFree(bills);
 
-        int freeBills = 0;
-        for (IceCreamBill bill: bills) {
-            if (bill.getPrice() == 0) {
-               freeBills++;
-            }
-        }
-
-        assertEquals(5, freeBills);
+        assertFrees(5, bills);
     }
 
     @Test
@@ -226,7 +212,7 @@ public class IceCreamBillTest {
             items = new LinkedList<>();
         }
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 10; i++) {
             items.add(new MenuItem("Banana", itemTypes.Budini, 5));
             bills.add(new IceCreamBill(items, new User(i+5, "Joe", "Doe", 20), date));
 
@@ -235,14 +221,7 @@ public class IceCreamBillTest {
 
         IceCreamBill.makeFree(bills);
 
-        int freeBills = 0;
-        for (IceCreamBill bill: bills) {
-            if (bill.getPrice() == 0) {
-               freeBills++;
-            }
-        }
-
-        assertEquals(5, freeBills);
+        assertFrees(5, bills);
     }
 
     @Test
@@ -255,7 +234,7 @@ public class IceCreamBillTest {
         List<IceCreamBill> bills = new LinkedList<>();
         for (int i = 0; i < 5; i++) {
             items.add(new MenuItem("Banana", itemTypes.Budini, 5));
-            bills.add(new IceCreamBill(items, new User(i, "Joe", "Doe", 18), date));
+            bills.add(new IceCreamBill(items, new User(i, "Joe", "Doe", 18), date));    // Orario invalido
 
             items = new LinkedList<>();
         }
@@ -264,20 +243,25 @@ public class IceCreamBillTest {
         date = calendar.getTime();
         for (int i = 0; i < 5; i++) {
             items.add(new MenuItem("Banana", itemTypes.Budini, 5));
-            bills.add(new IceCreamBill(items, new User(i+5, "Joe", "Doe", 20), date));
+            bills.add(new IceCreamBill(items, new User(i+5, "Joe", "Doe", 20), date));  // Eta' invalida
 
             items = new LinkedList<>();
         }
 
         IceCreamBill.makeFree(bills);
 
+        assertFrees(0, bills);
+    }
+
+    private void assertFrees(int expectedFreeBills, List<IceCreamBill> bills) 
+    throws TakeAwayBillException{
+        
         int freeBills = 0;
         for (IceCreamBill bill: bills) {
             if (bill.getPrice() == 0) {
                freeBills++;
             }
         }
-
-        assertEquals(0, freeBills);
+        assertEquals(expectedFreeBills, freeBills);
     }
 }
