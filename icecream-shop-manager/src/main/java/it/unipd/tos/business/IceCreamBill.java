@@ -25,13 +25,22 @@ public class IceCreamBill implements TakeAwayBill {
     private double calculateCost(List<MenuItem> items) {
 
         double cost = 0;
+        double beveragesCost = 0;
         for(MenuItem item: items) {
+
             cost += item.getPrice();
+            if (item.getType() == itemTypes.Bevande) {
+                beveragesCost += item.getPrice();
+            }
         }
 
-        double icecreamDiscount = icecreamDiscount(items);
+        cost = cost - icecreamDiscount(items);
 
-        return cost - icecreamDiscount;
+        if (cost - beveragesCost >= 50) {
+            cost = cost - (cost / 10);
+        }
+
+        return cost;
     }
 
     private double icecreamDiscount(List<MenuItem> items) {

@@ -81,4 +81,33 @@ public class IceCreamBillTest {
 
         assertEquals(40, totalPrice, 0);
     }
+
+    @Test
+    public void testGetOrderPrice_CostMoreThan50_Discount() throws TakeAwayBillException {
+
+        for(int i =0; i<10; i++) {
+            items.add(new MenuItem("Banana", itemTypes.Budini, 5));
+        }
+        items.add(new MenuItem("Coppa Nafta", MenuItem.itemTypes.Gelati, 4));
+        items.add(new MenuItem("Premium Water", itemTypes.Bevande, 6));
+        // 5*10 + 4 + 6 - 60/10 = 54
+
+        double totalPrice = bill.getOrderPrice(items, new User(1, "Joe", "Doe", 20), new Date());
+
+        assertEquals(54, totalPrice, 0);
+    }
+
+    @Test
+    public void testGetOrderPrice_5orMoreIcecreamsAndCostMoreThan50_Discount() throws TakeAwayBillException {
+
+        for(int i =0; i<10; i++) {
+            items.add(new MenuItem("Banana", itemTypes.Budini, 5));
+            items.add(new MenuItem("Mela", itemTypes.Gelati, 6));
+        }
+        // 10*(6+5) - 6/2 = 107 => -107/10 => 96.3
+
+        double totalPrice = bill.getOrderPrice(items, new User(1, "Joe", "Doe", 20), new Date());
+
+        assertEquals(96.3, totalPrice, 0);
+    }
 }
