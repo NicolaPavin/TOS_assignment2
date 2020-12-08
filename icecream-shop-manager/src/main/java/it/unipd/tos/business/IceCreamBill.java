@@ -8,6 +8,7 @@ import java.util.List;
 import it.unipd.tos.business.exception.TakeAwayBillException;
 import it.unipd.tos.model.MenuItem;
 import it.unipd.tos.model.User;
+import it.unipd.tos.model.MenuItem.itemTypes;
 
 public class IceCreamBill implements TakeAwayBill {
     
@@ -28,6 +29,24 @@ public class IceCreamBill implements TakeAwayBill {
             cost += item.getPrice();
         }
 
-        return cost;
+        double icecreamDiscount = icecreamDiscount(items);
+
+        return cost - icecreamDiscount;
+    }
+
+    private double icecreamDiscount(List<MenuItem> items) {
+
+        int icecreamNumber = 0;
+        double lowestIcecreamPrice = Double.MAX_VALUE;
+        for(MenuItem item: items) {
+            if (item.getType() == itemTypes.Gelati) {
+                icecreamNumber++;
+                if (item.getPrice() < lowestIcecreamPrice) {
+                    lowestIcecreamPrice = item.getPrice();
+                }
+            }    
+        }
+
+        return icecreamNumber >= 5 ? lowestIcecreamPrice/2 : 0;
     }
 }
