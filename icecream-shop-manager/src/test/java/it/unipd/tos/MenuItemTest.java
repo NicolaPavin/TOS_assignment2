@@ -27,4 +27,9 @@ public class MenuItemTest {
     public void testMenuItem_Price() {
         assertEquals(4, item.getPrice(), 0);
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testUser_IllegalAge_Exception() {
+        item =  new MenuItem("Pistacchio", MenuItem.itemTypes.Gelati, -4);
+    }
 }

@@ -12,6 +12,11 @@ public class MenuItem {
     private final double price;
 
     public MenuItem(String name, itemTypes it, double price) {
+
+        if(price < 0) {
+            throw new IllegalArgumentException();
+        }
+
         this.itemType = it;
         this.name = name;
         this.price = price;
