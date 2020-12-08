@@ -3,6 +3,7 @@
 ////////////////////////////////////////////////////////////////////
 package it.unipd.tos;
 
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
@@ -30,7 +31,7 @@ public class IceCreamBillTest {
         user = new User(1, "Joe", "Doe", 20);
     }
 
-    
+    // TEST getOrderPrice --- Requisiti 1 - 5
     @Test(expected = NullPointerException.class)
     public void testGetOrderPrice_null_Exception() throws TakeAwayBillException{
         double zero = bill.getOrderPrice(null, null, null);
@@ -144,5 +145,139 @@ public class IceCreamBillTest {
         double totalPrice = bill.getOrderPrice(items, user, new Date());
 
         assertEquals(8, totalPrice, 0);
+    }
+
+    // Requisito 6
+    @Test
+    public void testGetPrice() throws TakeAwayBillException {
+        
+        items.add(new MenuItem("Coppa GOLD", MenuItem.itemTypes.Gelati, 12));
+        IceCreamBill bill = new IceCreamBill(items, user, new Date());
+
+        assertEquals(12, bill.getPrice(), 0);
+    }
+
+    @Test
+    public void testMakeFree_20OrdersFrom18To19ByMinors_FreeOrders() 
+    throws TakeAwayBillException {
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 18);
+        Date date = calendar.getTime();
+        List<IceCreamBill> bills = new LinkedList<>();
+        for (int i = 0; i < 20; i++) {
+            items.add(new MenuItem("Banana", itemTypes.Budini, 5));
+            bills.add(new IceCreamBill(items, new User(i, "Joe", "Doe", 18), date));
+
+            items = new LinkedList<>();
+        }
+
+        IceCreamBill.makeFree(bills);
+
+        int freeBills = 0;
+        for (IceCreamBill bill: bills) {
+            if (bill.getPrice() == 0) {
+               freeBills++;
+            }
+        }
+
+        assertEquals(10, freeBills);
+    }
+
+    @Test
+    public void testMakeFree_10OrdersFrom18To19By5Minors_FreeOrders() 
+    throws TakeAwayBillException {
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 18);
+        Date date = calendar.getTime();
+        List<IceCreamBill> bills = new LinkedList<>();
+        for (int i = 0; i < 10; i++) {
+            items.add(new MenuItem("Banana", itemTypes.Budini, 5));
+            bills.add(new IceCreamBill(items, new User(i%5, "Joe", "Doe", 18), date));
+
+            items = new LinkedList<>();
+        }
+
+        IceCreamBill.makeFree(bills);
+
+        int freeBills = 0;
+        for (IceCreamBill bill: bills) {
+            if (bill.getPrice() == 0) {
+               freeBills++;
+            }
+        }
+
+        assertEquals(5, freeBills);
+    }
+
+    @Test
+    public void testMakeFree_FiveOrdersFrom18To19ByMinorsAndOthers_FreeOrdersAndNormalOnes() 
+    throws TakeAwayBillException {
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 18);
+        Date date = calendar.getTime();
+        List<IceCreamBill> bills = new LinkedList<>();
+        for (int i = 0; i < 5; i++) {
+            items.add(new MenuItem("Banana", itemTypes.Budini, 5));
+            bills.add(new IceCreamBill(items, new User(i, "Joe", "Doe", 18), date));
+
+            items = new LinkedList<>();
+        }
+
+        for (int i = 0; i < 5; i++) {
+            items.add(new MenuItem("Banana", itemTypes.Budini, 5));
+            bills.add(new IceCreamBill(items, new User(i+5, "Joe", "Doe", 20), date));
+
+            items = new LinkedList<>();
+        }
+
+        IceCreamBill.makeFree(bills);
+
+        int freeBills = 0;
+        for (IceCreamBill bill: bills) {
+            if (bill.getPrice() == 0) {
+               freeBills++;
+            }
+        }
+
+        assertEquals(5, freeBills);
+    }
+
+    @Test
+    public void testMakeFree_NoOrdersFrom18To19ByMinors_NormalOnes() 
+    throws TakeAwayBillException {
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 20);
+        Date date = calendar.getTime();
+        List<IceCreamBill> bills = new LinkedList<>();
+        for (int i = 0; i < 5; i++) {
+            items.add(new MenuItem("Banana", itemTypes.Budini, 5));
+            bills.add(new IceCreamBill(items, new User(i, "Joe", "Doe", 18), date));
+
+            items = new LinkedList<>();
+        }
+
+        calendar.set(Calendar.HOUR_OF_DAY, 18);
+        date = calendar.getTime();
+        for (int i = 0; i < 5; i++) {
+            items.add(new MenuItem("Banana", itemTypes.Budini, 5));
+            bills.add(new IceCreamBill(items, new User(i+5, "Joe", "Doe", 20), date));
+
+            items = new LinkedList<>();
+        }
+
+        IceCreamBill.makeFree(bills);
+
+        int freeBills = 0;
+        for (IceCreamBill bill: bills) {
+            if (bill.getPrice() == 0) {
+               freeBills++;
+            }
+        }
+
+        assertEquals(0, freeBills);
     }
 }
