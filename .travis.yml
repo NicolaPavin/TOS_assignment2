@@ -11,6 +11,9 @@ jdk: openjdk8
 directories:
   ​- $HOME/.m2
   
+before_script: 
+    cd icecream-shop-manager
+    
 script:
   ​- mvn clean install
   
