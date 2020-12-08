@@ -112,12 +112,37 @@ public class IceCreamBillTest {
     }
 
     @Test(expected = TakeAwayBillException.class)
-    public void testIceCreamBill_30orMoreItems_Exception() throws TakeAwayBillException {
+    public void testGetOrderPrice_30orMoreItems_Exception() throws TakeAwayBillException {
 
         for(int i =0; i<35; i++) {
             items.add(new MenuItem("Coke", itemTypes.Bevande, 10));
         }
 
         double totalPrice = bill.getOrderPrice(items, user, new Date());
+    }
+
+    @Test
+    public void testGetOrderPrice_CostIsLessThan10_Commission() throws TakeAwayBillException {
+
+        items.add(new MenuItem("Frenzy", itemTypes.Bevande, 7.5));
+        // 7.5 => +0.5 => 8
+
+        double totalPrice = bill.getOrderPrice(items, user, new Date());
+
+        assertEquals(8, totalPrice, 0);
+    }
+
+    @Test
+    public void testGetOrderPrice_5IcecreamsAndCostIsLessThan10_DiscoutnAndCommission() 
+    throws TakeAwayBillException {
+
+        for(int i =0; i<8; i++) {
+            items.add(new MenuItem("Cilli", itemTypes.Gelati, 1));
+        }
+        // 1*8 - 1/2 + 0.5 = 8
+
+        double totalPrice = bill.getOrderPrice(items, user, new Date());
+
+        assertEquals(8, totalPrice, 0);
     }
 }

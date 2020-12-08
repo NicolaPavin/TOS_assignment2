@@ -44,6 +44,10 @@ public class IceCreamBill implements TakeAwayBill {
             cost = cost - (cost / 10);
         }
 
+        if (!items.isEmpty() && cost < 10) {
+            cost += 0.5;
+        }
+
         return cost;
     }
 
